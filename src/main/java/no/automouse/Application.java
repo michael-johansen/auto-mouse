@@ -22,7 +22,7 @@ public class Application {
 		while (true) {
 			Point newMouseLocation = MouseInfo.getPointerInfo().getLocation();
 			int currentHour = new GregorianCalendar().get(Calendar.HOUR_OF_DAY);
-			if (oldMouseLocation.equals(newMouseLocation) && prop.get("start") < currentHour
+			if (oldMouseLocation.equals(newMouseLocation) && prop.get("start") <= currentHour
 					&& currentHour < prop.get("stop")) {
 				int x = prop.get("dx") * random.nextInt(2) - prop.get("dx") / 2 + oldMouseLocation.x;
 				int y = prop.get("dy") * random.nextInt(2) - prop.get("dy") / 2 + oldMouseLocation.y;

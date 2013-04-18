@@ -35,8 +35,8 @@ public class ApplicationTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        clock = new IncrementalClock();
         executorService = Executors.newSingleThreadScheduledExecutor();
+        clock = new IncrementalClock(executorService);
         properties = Application.defaultArgs();
 
         properties.put("dx", 2);
@@ -51,18 +51,26 @@ public class ApplicationTest {
     @Test
     public void testMouseIsMoved() throws Exception {
         application.start();
-        executorService.awaitTermination(1000, TimeUnit.MILLISECONDS);
+        executorService.awaitTermination(10, TimeUnit.SECONDS);
 
-        assertThat(clock.hour, is(10));
+        assertThat(clock.hour, is(11));
         verify(robot, times(2)).mouseMove(anyInt(), anyInt());
     }
 
     private static class IncrementalClock implements Clock {
 
+        private final ScheduledExecutorService executorService;
         private int hour;
+
+        public IncrementalClock(ScheduledExecutorService executorService) {
+            this.executorService = executorService;
+        }
 
         @Override
         public int getHour() {
+            if(hour == 10){
+              executorService.shutdown();
+            }
             return hour++;
         }
     }

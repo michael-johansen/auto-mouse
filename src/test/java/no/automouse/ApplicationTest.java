@@ -51,9 +51,9 @@ public class ApplicationTest {
     @Test
     public void testMouseIsMoved() throws Exception {
         application.start();
-        executorService.awaitTermination(10, TimeUnit.SECONDS);
+        executorService.awaitTermination(60, TimeUnit.SECONDS);
 
-        assertThat(clock.hour, is(11));
+        assertThat(clock.hour, is(10));
         verify(robot, times(2)).mouseMove(anyInt(), anyInt());
     }
 
@@ -68,8 +68,9 @@ public class ApplicationTest {
 
         @Override
         public int getHour() {
-            if(hour == 10){
-              executorService.shutdown();
+            if (hour == 10) {
+                executorService.shutdownNow();
+                return 10;
             }
             return hour++;
         }

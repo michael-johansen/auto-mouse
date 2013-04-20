@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class Application {
@@ -18,7 +19,7 @@ public class Application {
     private Runnable command = new Runnable() {
         @Override
         public void run() {
-            System.out.println("executing task.");
+            System.out.printf("executing task. @%d%n", System.currentTimeMillis());
 
             Point newMouseLocation = getMouseLocation();
             boolean atSameLocation = oldMouseLocation.equals(newMouseLocation);
@@ -67,9 +68,10 @@ public class Application {
         return map;
     }
 
-    void start() {
-        System.out.printf("Scheduling fixed rate task @%d ms%n", properties.get("dt"));
-        scheduledExecutorService.scheduleAtFixedRate(command, 0, properties.get("dt"), TimeUnit.MILLISECONDS);
+    ScheduledFuture<?> start() {
+        Integer dt = properties.get("dt");
+        System.out.printf("Scheduling fixed rate task @%d ms%n", dt);
+        return scheduledExecutorService.scheduleAtFixedRate(command, dt, dt, TimeUnit.MILLISECONDS);
     }
 
     private boolean isActive() {

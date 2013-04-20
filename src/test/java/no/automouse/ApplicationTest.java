@@ -9,11 +9,11 @@ import java.awt.*;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -36,7 +36,7 @@ public class ApplicationTest {
         MockitoAnnotations.initMocks(this);
 
         executorService = Executors.newSingleThreadScheduledExecutor();
-        clock = new IncrementalClock(executorService);
+        clock = new IncrementalClock();
         properties = Application.defaultArgs();
 
         properties.put("dx", 2);
@@ -51,27 +51,17 @@ public class ApplicationTest {
     @Test
     public void testMouseIsMoved() throws Exception {
         application.start();
-        executorService.awaitTermination(60, TimeUnit.SECONDS);
-
-        assertThat(clock.hour, is(10));
-        verify(robot, times(2)).mouseMove(anyInt(), anyInt());
+        executorService.awaitTermination(5, TimeUnit.SECONDS);
+        verify(robot, atLeastOnce()).mouseMove(anyInt(), anyInt());
     }
 
     private static class IncrementalClock implements Clock {
 
-        private final ScheduledExecutorService executorService;
         private int hour;
-
-        public IncrementalClock(ScheduledExecutorService executorService) {
-            this.executorService = executorService;
-        }
 
         @Override
         public int getHour() {
-            if (hour == 10) {
-                executorService.shutdown();
-                return 10;
-            }
+
             return hour++;
         }
     }

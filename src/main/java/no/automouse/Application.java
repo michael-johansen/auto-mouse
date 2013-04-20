@@ -15,6 +15,19 @@ public class Application {
     private final Clock clock;
     private Point oldMouseLocation = MouseInfo.getPointerInfo().getLocation();
     private ScheduledExecutorService scheduledExecutorService;
+    private Runnable command = new Runnable() {
+        @Override
+        public void run() {
+            Point newMouseLocation = getMouseLocation();
+            boolean atSameLocation = oldMouseLocation.equals(newMouseLocation);
+            if (atSameLocation && isActive()) {
+                int x = randomStep(properties.get("dx"), oldMouseLocation.x);
+                int y = randomStep(properties.get("dy"), oldMouseLocation.y);
+                robot.mouseMove(x, y);
+            }
+            oldMouseLocation = getMouseLocation();
+        }
+    };
 
 
     public Application(Map<String, Integer> properties, Clock clock, ScheduledExecutorService executorService, Robot robot) throws AWTException {
@@ -53,19 +66,7 @@ public class Application {
     }
 
     void start() {
-        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                Point newMouseLocation = getMouseLocation();
-                boolean atSameLocation = oldMouseLocation.equals(newMouseLocation);
-                if (atSameLocation && isActive()) {
-                    int x = randomStep(properties.get("dx"), oldMouseLocation.x);
-                    int y = randomStep(properties.get("dy"), oldMouseLocation.y);
-                    robot.mouseMove(x, y);
-                }
-                oldMouseLocation = getMouseLocation();
-            }
-        }, 0, properties.get("dt"), TimeUnit.MILLISECONDS);
+        scheduledExecutorService.scheduleAtFixedRate(command, 0, properties.get("dt"), TimeUnit.MILLISECONDS);
     }
 
     private boolean isActive() {

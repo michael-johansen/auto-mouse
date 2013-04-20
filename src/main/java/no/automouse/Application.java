@@ -18,6 +18,8 @@ public class Application {
     private Runnable command = new Runnable() {
         @Override
         public void run() {
+            System.out.println("executing task.");
+
             Point newMouseLocation = getMouseLocation();
             boolean atSameLocation = oldMouseLocation.equals(newMouseLocation);
             if (atSameLocation && isActive()) {
@@ -66,6 +68,7 @@ public class Application {
     }
 
     void start() {
+        System.out.printf("Scheduling fixed rate task @%d ms%n", properties.get("dt"));
         scheduledExecutorService.scheduleAtFixedRate(command, 0, properties.get("dt"), TimeUnit.MILLISECONDS);
     }
 

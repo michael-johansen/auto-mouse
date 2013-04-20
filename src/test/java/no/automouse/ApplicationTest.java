@@ -69,7 +69,7 @@ public class ApplicationTest {
         @Override
         public int getHour() {
             if (hour == 10) {
-                executorService.shutdownNow();
+                executorService.shutdown();
                 return 10;
             }
             return hour++;

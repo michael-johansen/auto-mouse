@@ -21,9 +21,7 @@ public class Application {
         public void run() {
             System.out.printf("executing task. @%d%n", System.currentTimeMillis());
 
-            Point newMouseLocation = getMouseLocation();
-            boolean atSameLocation = oldMouseLocation.equals(newMouseLocation);
-            if (atSameLocation && isActive()) {
+            if (isActive()) {
                 int x = randomStep(properties.get("dx"), oldMouseLocation.x);
                 int y = randomStep(properties.get("dy"), oldMouseLocation.y);
                 robot.mouseMove(x, y);
